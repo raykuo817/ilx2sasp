@@ -1,0 +1,43 @@
+﻿
+; 要產生 m3u 播放列表的目錄
+M3U_DIR          = ./playlists
+
+; 指向 iTunes Library XML 檔, 檔名可能是 "iTunes Music Library.xml" 或 "iTunes Library.xml"
+XML             = /music/iTunes/iTunes Music Library.xml
+
+; 1 = 只執行一次產生 m3u 播放列表就結束程式, 0 = 持續執行, 每當 XML 有變動時, 跟據 XML 內容自動產生 m3u 播放列表
+RUN_ONCE		 = 0
+
+; 每隔多少秒查詢一次 XML 是否有變動 (當 RUN_ONCE = 0 時)
+INTERVAL		 = 60
+
+;
+REPLACE_XML_MUSIC_FOLDER = ../iTunes/iTunes Media/
+REMOVE_PREFIX_PATH =
+
+; 1 = 使用 FTP 方法上傳 M3U 播放列表, 0 = 不使用 FTP
+FTP 			 = 0
+
+; 1 = 被動動模, 0 = 主動模式
+FTP_PASV		 = 1
+
+; FPT Server host IP
+; "DOCKER_HOST_IP" 表示由程式自動偵測 Server IP, 當程式在 Docker 中執行時有效
+FTP_HOST_NAME	 = DOCKER_HOST_IP
+
+; FTP Port
+FTP_PORT		 = 21
+
+; FTP username and password
+FTP_USER		 = user
+FTP_PASSWORD	 = password
+
+; FTP 中 m3u 所在目錄 (要上傳的目錄)
+FTP_M3U_DIR 	 = /music/playlists
+
+; 要略過不處理的播放列表, 可以加在下面 [IGNORE] 中, 或是在 iTunes 中將播放列表改名第一個字加入!(金嘆號)
+[IGNORE]
+0 = 要略過不處理的播放列表1
+1 = 要略過不處理的播放列表2
+2 = 要略過不處理的播放列表3
+
