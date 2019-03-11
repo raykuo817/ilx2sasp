@@ -11,8 +11,12 @@
 #define new DEBUG_NEW
 #endif
 
-BOOL g_bThreadRun = TRUE;
-UINT MonitorFile(LPVOID pVar);
+UINT    MonitorXml(LPVOID pVar);
+UINT    MonitorPlaylist(LPVOID pVar);
+LONG    g_endThreadXml = 0;
+LONG    g_endThreadPlaylist = 0;
+HANDLE  g_hDirectoryHandleXml	= NULL;
+HANDLE  g_hDirectoryHandlePlaylist	= NULL;
 
 // Cilx2saspDlg dialog
 
@@ -87,7 +91,7 @@ BOOL Cilx2saspDlg::OnInitDialog()
     SaveIni();
     RunPHP();
 
-    m_thread = AfxBeginThread(MonitorFile, (LPVOID)this);
+    RunThread();
 
     return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -140,6 +144,9 @@ void Cilx2saspDlg::OnBnClickedButtonSelPhpDir()
     if (BrowseForFolder(hWnd, TEXT("Choose PHP folder : "), curDir, szPath)) {
         GetDlgItem(IDC_EDIT_PHP_DIR)->SetWindowText(szPath);
         SaveIni();
+		RunPHP();
+		StopThread();
+		RunThread();
     }
 }
 
@@ -155,6 +162,9 @@ void Cilx2saspDlg::OnBnClickedButtonSelPlaylistDir()
     if (BrowseForFolder(hWnd, TEXT("Choose Audio Station Playlists folder : "), curDir, szPath)) {
         GetDlgItem(IDC_EDIT_PLAYLISTS_DIR)->SetWindowText(szPath);
         SaveIni();
+		RunPHP();
+		StopThread();
+		RunThread();
     }
 }
 
@@ -169,6 +179,9 @@ void Cilx2saspDlg::OnBnClickedButtonSelXmlFile()
         CString file = dlg.GetPathName();
         GetDlgItem(IDC_EDIT_XML_FILE)->SetWindowText(file);
         SaveIni();
+		RunPHP();
+		StopThread();
+		RunThread();
     }
 }
 
@@ -442,7 +455,8 @@ LRESULT Cilx2saspDlg::OnShowTask(WPARAM wParam, LPARAM lParam)
 
 void Cilx2saspDlg::OnDestroy()
 {
-    g_bThreadRun = FALSE;
+    StopThread();
+
 	Shell_NotifyIcon(NIM_DELETE, &m_nid);
 	CDialog::OnDestroy();
 }
@@ -456,26 +470,26 @@ void Cilx2saspDlg::OnSize(UINT nType, int cx, int cy)
 	}
 }
 
-UINT MonitorFile(LPVOID pVar)
+UINT MonitorXml(LPVOID pVar)
 {
 	int		nBufferSize			= 4096;
 	char*	buffer				= new char[nBufferSize];
-	HANDLE  hDirectoryHandle	= NULL;
-    bool bIncludeSubdirectories = false;
 
     TCHAR   curXmlDir[MAX_PATH];
     TCHAR   curXml[MAX_PATH];
 
     Cilx2saspDlg *dlg = (Cilx2saspDlg *)pVar;
+
+    //get iTunes library XML directory
     dlg->GetDlgItem(IDC_EDIT_XML_FILE)->GetWindowText(curXmlDir, MAX_PATH);
-    if (!IsFile(curXmlDir)) {
-        return 1;
-    }
+    if (!IsFile(curXmlDir)) return 1;
     LPTSTR tszSlash = _tcsrchr(curXmlDir, _T('\\'));
     if (tszSlash) *tszSlash = _T('\0');
+
+    //get iTunes library XML filename
     _tcscpy_s(curXml, ++tszSlash);
 
-	hDirectoryHandle = ::CreateFile(
+	g_hDirectoryHandleXml = ::CreateFile(
 		curXmlDir,
 		FILE_LIST_DIRECTORY,
 		FILE_SHARE_READ
@@ -487,20 +501,20 @@ UINT MonitorFile(LPVOID pVar)
 		| FILE_FLAG_OVERLAPPED,
 		NULL);
 
-	if(hDirectoryHandle == INVALID_HANDLE_VALUE)
+	if(g_hDirectoryHandleXml == INVALID_HANDLE_VALUE)
 		return 1;
 
-	while(1)
+	while (g_endThreadXml == 0)
 	{
 		DWORD dwBytes = 0;
 
 		memset(buffer, 0, nBufferSize);
 
 		if(!::ReadDirectoryChangesW(
-			hDirectoryHandle,
+			g_hDirectoryHandleXml,
 			buffer,
 			nBufferSize,
-			bIncludeSubdirectories,
+			false,      //sub directory
 			FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_FILE_NAME,
 			&dwBytes,
 			NULL,
@@ -547,11 +561,100 @@ UINT MonitorFile(LPVOID pVar)
 
 	delete buffer;
 
-	if(hDirectoryHandle)
-		CloseHandle(hDirectoryHandle);
+	if(g_hDirectoryHandleXml)
+		CloseHandle(g_hDirectoryHandleXml);
 
     return 0;
 }
+
+UINT MonitorPlaylist(LPVOID pVar)
+{
+	int		nBufferSize			= 4096;
+	char*	buffer				= new char[nBufferSize];
+
+    TCHAR   curPlaylistsDir[MAX_PATH];
+
+    Cilx2saspDlg *dlg = (Cilx2saspDlg *)pVar;
+
+    //get platlists directory
+    dlg->GetDlgItem(IDC_EDIT_PLAYLISTS_DIR)->GetWindowText(curPlaylistsDir, MAX_PATH);
+    if (!IsDir(curPlaylistsDir)) return 1;
+
+	g_hDirectoryHandlePlaylist = ::CreateFile(
+		curPlaylistsDir,
+		FILE_LIST_DIRECTORY,
+		FILE_SHARE_READ
+		| FILE_SHARE_WRITE
+		| FILE_SHARE_DELETE,
+		NULL,
+		OPEN_EXISTING,
+		FILE_FLAG_BACKUP_SEMANTICS
+		| FILE_FLAG_OVERLAPPED,
+		NULL);
+
+	if(g_hDirectoryHandlePlaylist == INVALID_HANDLE_VALUE)
+		return 1;
+
+	while (g_endThreadPlaylist == 0)
+	{
+		DWORD dwBytes = 0;
+
+		memset(buffer, 0, nBufferSize);
+
+		if(!::ReadDirectoryChangesW(
+			g_hDirectoryHandlePlaylist,
+			buffer,
+			nBufferSize,
+			true, //sub directory
+			FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_FILE_NAME,
+			&dwBytes,
+			NULL,
+			NULL) || GetLastError() == ERROR_INVALID_HANDLE)
+		{
+			break;
+		}
+
+		if(!dwBytes)
+		{
+			printf("Buffer overflow~~\r\n");
+		}
+
+		PFILE_NOTIFY_INFORMATION record = (PFILE_NOTIFY_INFORMATION)buffer;
+		DWORD cbOffset = 0;
+
+		do
+		{
+			switch (record->Action)
+			{
+			case FILE_ACTION_ADDED:
+				break;
+			case FILE_ACTION_REMOVED:
+				break;
+			case FILE_ACTION_MODIFIED:
+				break;
+			case FILE_ACTION_RENAMED_OLD_NAME:
+				break;
+			case FILE_ACTION_RENAMED_NEW_NAME:
+				break;
+			default:
+				break;
+			}
+
+            dlg->RunPHP();
+
+			cbOffset = record->NextEntryOffset;
+			record = (PFILE_NOTIFY_INFORMATION)((LPBYTE) record + cbOffset);
+		}while(cbOffset);
+	}
+
+	delete buffer;
+
+	if(g_hDirectoryHandlePlaylist)
+		CloseHandle(g_hDirectoryHandlePlaylist);
+
+    return 0;
+}
+
 
 BOOL Cilx2saspDlg::PreTranslateMessage(MSG *pMsg)
 {
@@ -562,3 +665,19 @@ BOOL Cilx2saspDlg::PreTranslateMessage(MSG *pMsg)
 
     return CDialog::PreTranslateMessage(pMsg);
 }
+
+void Cilx2saspDlg::RunThread()
+{
+    m_threadXml = AfxBeginThread(MonitorXml,(LPVOID)this);
+    m_threadPlaylist = AfxBeginThread(MonitorPlaylist, (LPVOID)this);
+}
+
+void Cilx2saspDlg::StopThread()
+{
+    CancelIoEx(g_hDirectoryHandleXml, 0);
+    CancelIoEx(g_hDirectoryHandlePlaylist, 0);
+    InterlockedIncrement(&g_endThreadXml);
+    InterlockedIncrement(&g_endThreadPlaylist);
+}
+
+

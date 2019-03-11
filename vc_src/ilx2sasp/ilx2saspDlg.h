@@ -27,7 +27,7 @@ protected:
     CIniReader  *m_IniReader;
     BOOL        m_autorun;
     UINT		m_bClose;
-    CWinThread *m_thread;
+    CWinThread *m_threadXml, *m_threadPlaylist;
 	NOTIFYICONDATA m_nid;
 
 	// Generated message map functions
@@ -41,6 +41,8 @@ protected:
 	void WatchFile();
     void ShowHideWindow(int cmd);
     BOOL PreTranslateMessage(MSG *pMsg);
+    void RunThread();
+    void StopThread();
 
 public:
 	afx_msg void OnBnClickedButtonSelPhpDir();

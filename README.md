@@ -2,6 +2,8 @@
 
 iTunes Library XML 2 Synology Audio Station Playlists
 
+ 最後更新: 2016/08/28 
+
 
 
 ### 主要功能：
