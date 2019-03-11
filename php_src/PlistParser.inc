@@ -27,6 +27,7 @@ class plistParser extends XMLReader
     private function process() {
 		// plist's always start with a doctype, use it as a validity check
 		$this->read();
+
 		if($this->nodeType !== XMLReader::DOC_TYPE || $this->name !== "plist") {
 			throw new Exception(sprintf("Error parsing plist. nodeType: %d -- Name: %s", $this->nodeType, $this->name), 2);
 		}
@@ -54,7 +55,9 @@ class plistParser extends XMLReader
 
 	private function parse_node() {
 		// If not an element, nothing for us to do
-		if($this->nodeType !== XMLReader::ELEMENT) return;
+		if($this->nodeType !== XMLReader::ELEMENT) {
+				return $array;
+		}
 		
 		switch($this->name) {
 			case 'data': 
@@ -111,14 +114,30 @@ class plistParser extends XMLReader
 	}
 	
 	private function parse_array() {
+//		$array = array();
+//      $this->nextOfType(XMLReader::ELEMENT);
+//		do {
+//			$array[] = $this->parse_node();
+//			// skip over any whitespace
+//			$this->nextOfType(XMLReader::ELEMENT, XMLReader::END_ELEMENT);
+//		} while($this->nodeType && !$this->isNodeOfTypeName(XMLReader::END_ELEMENT, "array"));
+//		return $array;
+//+++
+
 		$array = array();
-        $this->nextOfType(XMLReader::ELEMENT);
+
+		$this->nextOfType(XMLReader::ELEMENT, XMLReader::END_ELEMENT);
+		if ($this->isNodeOfTypeName(XMLReader::END_ELEMENT, "array")) {
+			return;
+		}
+
 		do {
 			$array[] = $this->parse_node();
-			// skip over any whitespace
 			$this->nextOfType(XMLReader::ELEMENT, XMLReader::END_ELEMENT);
-		} while($this->nodeType && !$this->isNodeOfTypeName(XMLReader::END_ELEMENT, "array"));
+		} while ($this->nodeType && !$this->isNodeOfTypeName(XMLReader::END_ELEMENT, "array"));
+
 		return $array;
+//---
 	}
 	
 	private function getNodeText() {

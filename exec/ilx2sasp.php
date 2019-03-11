@@ -69,11 +69,13 @@
 			}
 		}
 
-		$ignore_playlists = $ini['IGNORE'];
-		foreach ($ignore_playlists as $key => $val)
-		{
-			$ignore_playlists[$key] = iconv("BIG5", "UTF-8", $val);
-		}
+        if (isset($ini['IGNORE'])) {
+            $ignore_playlists = $ini['IGNORE'];
+    		foreach ($ignore_playlists as $key => $val)
+    		{
+    			$ignore_playlists[$key] = iconv("BIG5", "UTF-8", $val);
+    		}
+        }
 
 	}
 	else {
@@ -132,7 +134,7 @@
     $itunesxml = preg_replace("/\\\\/", "/", $itunesxml);
     $plistdir = preg_replace("/\\\\/", "/", $plistdir);
     if (!is_file($itunesxml)) {
-        echo "Error: Unknown input file ".$plistdir."\n";
+        echo "Error: Unknown input file ".$itunesxml."\n";
         return;
     }
     if (!is_dir($plistdir)) {
@@ -141,14 +143,30 @@
     }
 
     ///////////////////
-	include("PlistParser.inc");		//https://github.com/jsjohnst/php_class_lib
-	$parser = new plistParser();
-	$plist = $parser->parseFile($itunesxml);
+    include("PlistParser.inc");		//https://github.com/jsjohnst/php_class_lib
+    $parser = new plistParser();
+    $plist = $parser->parseFile($itunesxml);
+
+//var_dump($plist);
+
+    if (!isset($plist["Tracks"])) {
+        echo "iTunes XML error: No Tracks !!\n";
+        return;
+    }
+    if (!isset($plist["Playlists"])) {
+        echo "iTunes XML error: No Playlists !!\n";
+        return;
+    }
+    if (!isset($plist["Music Folder"])) {
+        echo "iTunes XML error: No Music Folder !!\n";
+        return;
+    }
 
 	$tracks = $plist["Tracks"];
 	$playlists = $plist["Playlists"];
-	$musicFolder = $plist["Music Folder"].'Music/';
-	$musicFolder = urldecode($plist["Music Folder"]).'Music/';
+
+    $musicFolder = $plist["Music Folder"].'Music/';
+    $musicFolder = urldecode($plist["Music Folder"]).'Music/';
 
     $m3udir = $plistdir."iTunes/";
     if (!is_dir($m3udir)) {
