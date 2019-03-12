@@ -26,7 +26,7 @@ iTunes 使用 iTunes 資料庫 (iTunes Library) 檔案和 iTunes Media 檔案夾
 
 在 Windows 中 iTunes Library 預設位置在 `c:\Users\user_name\Music\` ，也就是 `『音樂』` 資料夾。
 
-![img](https://github.com/raykuo817/ilx2sasp/tree/docker/img/iTunes-Library.jpg)
+![img](https://raw.githubusercontent.com/raykuo817/ilx2sasp/docker/img/iTunes-Library.jpg)
 
 
 
@@ -38,13 +38,13 @@ iTunes 使用 iTunes 資料庫 (iTunes Library) 檔案和 iTunes Media 檔案夾
 
 ilx2sasp 就是利用這個 XML 檔來將 iTunes 播放列表轉成 Audio Station 可用的播放列表 (*.m3u) 檔。
 
-![img](https://github.com/raykuo817/ilx2sasp/tree/docker/img/A2_13_091918_014304_PM.jpg)
+![img](https://raw.githubusercontent.com/raykuo817/ilx2sasp/docker/img/A2_13_091918_014304_PM.jpg)
 
 
 
 預設情況下 iTunes 不會建立 iTunes Music Library.xml 檔案，必需在 iTunes `『徧好設定』`中選取`『與其他應用程式共享 iTunes 資料庫 XML`，當 iTunes Library 有更新時 XML 才會同步更新。
 
-![img](https://github.com/raykuo817/ilx2sasp/tree/docker/img/A2_11_091918_015840_PM.jpg)
+![img](https://raw.githubusercontent.com/raykuo817/ilx2sasp/docker/img/A2_11_091918_015840_PM.jpg)
 
 
 
@@ -54,11 +54,11 @@ ilx2sasp 就是利用這個 XML 檔來將 iTunes 播放列表轉成 Audio Statio
 
 要使用 ilx2sasp 轉換歌曲播放列表，應該選取`『徧好設定』`中的 `『保持 iTunes Media 資料夾的整理狀態』`與 `『歌曲加入資料庫時，將其檔案複製到 iTunes Media 資料夾』`，然後執行`『統整資料庫』`的動作，這可以讓 iTunes 重新整理所有的媒體檔案，並依不同的媒體類別 (書籍、歌曲、電影、鈴聲) 將檔案複製到 \iTunes\iTunes Media\ 下的 Books、Music、Movie、Tones 資料夾，這樣 ilx2sasp 輸出的 m3u 播放列表中的歌曲路徑才不會錯誤。
 
-![img](https://github.com/raykuo817/ilx2sasp/tree/docker/img/A2_12_091918_021516_PM.jpg)
+![img](https://raw.githubusercontent.com/raykuo817/ilx2sasp/docker/img/A2_12_091918_021516_PM.jpg)
 
 
 
-![img](https://github.com/raykuo817/ilx2sasp/tree/docker/img/Screenshot_091918_035731_PM.jpg)
+![img](https://raw.githubusercontent.com/raykuo817/ilx2sasp/docker/img/Screenshot_091918_035731_PM.jpg)
 
 
 
@@ -83,25 +83,25 @@ ilx2sasp 就是利用這個 XML 檔來將 iTunes 播放列表轉成 Audio Statio
 下面以將 NAS music 資料夾掛載到磁碟機 `m:\` 為例，其中 `192.168.1.88` 是 NAS IP。
 
 Windows 10 連線網路磁碟機：開啟『檔案總管』，左窗格選取 『本機』。然後，在『電腦』索引標籤中，選取『連線網路磁碟機』。
-![img](https://github.com/raykuo817/ilx2sasp/tree/docker/img/A2_14_091918_062059_PM.jpg)
+![img](https://raw.githubusercontent.com/raykuo817/ilx2sasp/docker/img/A2_14_091918_062059_PM.jpg)
 
 
 
 為目的地資料夾指定一個`『磁碟機代號』`，然後在資料夾欄位輸入 `\\NAS IP\music` ，按一下完成來結束網路磁碟機連線的工作。
 
-![img](https://github.com/raykuo817/ilx2sasp/tree/docker/img/D-1.png)
+![img](https://raw.githubusercontent.com/raykuo817/ilx2sasp/docker/img/D-1.png)
 
  
 
 Window 7 連線網路磁碟機：開啟『檔案總管』，左窗格選取『電腦』，按一下上方的『連線網路磁碟機』。
 
-![img](https://github.com/raykuo817/ilx2sasp/tree/docker/img/Untitled_Clipping_091918_062703_PM.jpg)
+![img](https://raw.githubusercontent.com/raykuo817/ilx2sasp/docker/img/Untitled_Clipping_091918_062703_PM.jpg)
 
 
 
 為目的地資料夾指定一個`『磁碟機代號』`，然後在資料夾欄位輸入 `\\NAS IP\music` ，按一下完成來結束網路磁碟機連線的工作。
 
-![img](https://github.com/raykuo817/ilx2sasp/tree/docker/img/Untitled_Clipping_091918_062846_PM.jpg)
+![img](https://raw.githubusercontent.com/raykuo817/ilx2sasp/docker/img/Untitled_Clipping_091918_062846_PM.jpg)
 
 
 
@@ -110,7 +110,7 @@ Window 7 連線網路磁碟機：開啟『檔案總管』，左窗格選取『�
 1. 如果 iTunes 正在執行，請結束 iTunes。
 2. 使用『檔案總管』將 iTunes Library (也就是 `c:\Users\user_name\Music\`下的 `iTunes` 資料夾) 搬到掛載 NAS music 資料夾的磁碟機 `m:\`。
 3. 按住 `Shift` 鍵執行 iTunes，點選『`選擇資料庫`』。
-4. 選擇 `m:\iTunes\iTunes Library.itl` 。![img](https://github.com/raykuo817/ilx2sasp/tree/docker/img/8D.png)
+4. 選擇 `m:\iTunes\iTunes Library.itl` 。![img](https://raw.githubusercontent.com/raykuo817/ilx2sasp/docker/img/8D.png)
 
 
 
@@ -121,7 +121,7 @@ Window 7 連線網路磁碟機：開啟『檔案總管』，左窗格選取『�
 3. 切換至『位置』頁籤，在點選『移動』。
 4. 選擇掛載 NAS music 資料夾的磁碟機代號 `m:\` 。 
 
-![img](https://github.com/raykuo817/ilx2sasp/tree/docker/img/A2_16_092018_100814_AM.jpg)
+![img](https://raw.githubusercontent.com/raykuo817/ilx2sasp/docker/img/A2_16_092018_100814_AM.jpg)
 
 
 
@@ -133,7 +133,7 @@ Audio Station 播放清單分成『個人播放清單』與『共同播放清單
 
 『共同播放清單』則存放在 music 共用資料夾下 playlists 子資料夾 (`/music/playlists/`) ，可以使用 File Station 或透過 SMB / FTP 等方式存取，如果增加或刪除存放資料夾中的 m3u 檔，在 Audio Station 中也會看到相對應的變化。
 
-![img](https://github.com/raykuo817/ilx2sasp/tree/docker/img/Screenshot_030216_051711_PM.jpg)
+![img](https://raw.githubusercontent.com/raykuo817/ilx2sasp/docker/img/Screenshot_030216_051711_PM.jpg)
 
 
 
@@ -237,19 +237,19 @@ FTP FTP = 0
 
 直接在 docker hub 下載 [dockerhub raykuo/ilx2sasp](https://cloud.docker.com/repository/docker/raykuo/ilx2sasp) 映像檔，完成後使用 File Station 建立一個名為 ilx2sasp 的資料夾，然後點選 『ilx2sasp映像檔』 -> 『佈署』-> 『進階設定』-> 『儲存空間』-> 『新增資料夾』-> 掛載 music 與 ilx2sasp 資料夾 -> 『套用』 -> 『下一步』-> 『套用』，完成佈署。
 
-![img](https://github.com/raykuo817/ilx2sasp/tree/docker/img/Screenshot_092518_013657_PM.jpg)
+![img](https://raw.githubusercontent.com/raykuo817/ilx2sasp/docker/img/Screenshot_092518_013657_PM.jpg)
 
 
 
 首次執行會出現 『Docker 容器：ilx2sasp 意外停止』的錯誤訊息，這是正常情況因為 ini 還沒設定的關係。
 
-![img](https://github.com/raykuo817/ilx2sasp/tree/docker/img/Screenshot_092518_015445_PM.jpg)
+![img](https://raw.githubusercontent.com/raykuo817/ilx2sasp/docker/img/Screenshot_092518_015445_PM.jpg)
 
 
 
 使用 File Station 切到掛載的 ilx2sasp 目錄，可以看到多了一個 ilx2sasp.ini 檔，開啟並編輯檔案。
 
-![img](https://github.com/raykuo817/ilx2sasp/tree/docker/img/Screenshot_092518_020032_PM.jpg)
+![img](https://raw.githubusercontent.com/raykuo817/ilx2sasp/docker/img/Screenshot_092518_020032_PM.jpg)
 
 
 
